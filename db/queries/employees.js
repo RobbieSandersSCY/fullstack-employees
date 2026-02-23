@@ -7,21 +7,31 @@ import db from "#db/client";
  * @param {number} salary
  */
 export async function createEmployee({ name, birthday, salary }) {
-  try {
-    const {
-      rows: [employee],
-    } = await db.query(
-      `
-      INSERT INTO employees (name, birthday, salary)
-      VALUES ($1, $2, $3)
-      RETURNING *;
-      `,
-      [name, birthday, salary],
-    );
-    console.log("NEWLY CREATED EMPLOYEE", employee);
-  } catch (err) {
-    console.log("ERROR CREATING EMPLOYEE:", err);
-  }
+  const sql = `
+  INSERT INTO employees (name, birthday, salary)
+  VALUES ($1, $2, $3)
+  RETURNING *
+  `;
+  const {
+    rows: [employee],
+  } = await db.query(sql, [name, birthday, salary]);
+  return employee;
+
+  // try {
+  //   const {
+  //     rows: [employee],
+  //   } = await db.query(
+  //     `
+  //     INSERT INTO employees (name, birthday, salary)
+  //     VALUES ($1, $2, $3)
+  //     RETURNING *;
+  //     `,
+  //     [name, birthday, salary],
+  //   );
+  //   console.log("NEWLY CREATED EMPLOYEE", employee);
+  // } catch (err) {
+  //   console.log("ERROR CREATING EMPLOYEE:", err);
+  // }
 }
 
 // === Part 2 ===
@@ -57,7 +67,19 @@ export async function getEmployee(id) {
  * @returns undefined if employee with the given id does not exist
  */
 export async function updateEmployee({ id, name, birthday, salary }) {
-  // TODO
+  const sql = `
+  UPDATE employees
+  SET
+    name = $2,
+    birthday = $3,
+    salary = $4
+  WHERE id = $1
+  RETURNING *
+  `;
+  const {
+    rows: [employee],
+  } = await db.query(sql, [id, name, birthday, salary]);
+  return employee;
 }
 
 /**

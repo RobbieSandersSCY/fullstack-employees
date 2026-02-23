@@ -7,6 +7,7 @@ import {
   getEmployee,
   createEmployee,
   deleteEmployee,
+  updateEmployee,
 } from "#db/queries/employees";
 
 router.get("/", async (req, res) => {
@@ -28,7 +29,7 @@ router.post("/", async (req, res) => {
 });
 
 router.param("id", async (req, res, next, id) => {
-  // if (!id <= 0) return res.status(400).send("Please provide a valid ID");
+  // if (id <= 0) return res.status(400).send("Please provide a valid ID");
 
   const employee = await getEmployee(id);
   if (!employee) return res.status(404).send("Employee does not exist");
@@ -46,4 +47,20 @@ router.delete("/:id", async (req, res) => {
   if (!employee) return res.status(404).send("Employee does not exist");
 
   res.sendStatus(204);
+});
+
+router.put("/:id", async (req, res) => {
+  if (!req.body) return res.status(400).send("Request must have a body");
+
+  const { name, birthday, salary } = req.body;
+  if (!name || !birthday || !salary)
+    return res.status(400).send("Request must have name, birthday, and salary");
+
+  const employee = await updateEmployee({
+    id: req.employee.id,
+    name,
+    birthday,
+    salary,
+  });
+  res.send(employee);
 });

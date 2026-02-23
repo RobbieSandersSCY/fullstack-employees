@@ -30,6 +30,12 @@ router.post("/", async (req, res) => {
 
 router.param("id", async (req, res, next, id) => {
   // if (id <= 0) return res.status(400).send("Please provide a valid ID");
+  // if (req.params.id <= 0)
+  //   return res.status(400).send("ID must be a positive integer.");
+
+  // had to steal this from solution code
+  if (!/^\d+$/.test(id))
+    return res.status(400).send("ID must be a positive integer.");
 
   const employee = await getEmployee(id);
   if (!employee) return res.status(404).send("Employee does not exist");

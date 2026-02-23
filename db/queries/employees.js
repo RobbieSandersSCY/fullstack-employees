@@ -7,21 +7,17 @@ import db from "#db/client";
  * @param {number} salary
  */
 export async function createEmployee({ name, birthday, salary }) {
-  try {
-    const {
-      rows: [newlyCreatedEmployee],
-    } = await db.query(
-      `
-      INSERT INTO employees (name, birthday, salary)
-      VALUES ($1, $2, $3)
-      RETURNING *;
-      `,
-      [name, birthday, salary],
-    );
-    console.log("NEWLY CREATED EMPLOYEE", newlyCreatedEmployee);
-  } catch (err) {
-    console.log("ERROR CREATING EMPLOYEE:", err);
-  }
+  const sql = `
+  INSERT INTO employees
+    (name, birthday, salary)
+  VALUES
+    ($1, $2, $3)
+  RETURNING *
+  `;
+  const {
+    rows: [employee],
+  } = await db.query(sql, [name, birthday, salary]);
+  return employee;
 }
 
 // === Part 2 ===
@@ -41,7 +37,15 @@ export async function getEmployees() {
  * @returns undefined if employee with the given id does not exist
  */
 export async function getEmployee(id) {
-  // TODO
+  const sql = `
+  SELECT *
+  FROM employees
+  WHERE id = $1
+  `;
+  const {
+    rows: [employee],
+  } = await db.query(sql, [id]);
+  return employee;
 }
 
 /**

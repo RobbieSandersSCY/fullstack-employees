@@ -6,7 +6,7 @@ import employeeRouter from "#api/employees";
 
 app.use(express.json());
 
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
   res.send("Welcome to the Fullstack Employee API.");
 });
 

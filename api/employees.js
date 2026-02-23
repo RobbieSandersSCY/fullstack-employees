@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
   res.send(employees);
 });
 
-router.post("/", async (res, req) => {
+router.post("/", async (req, res) => {
   if (!req.body) return res.status(400).send("Request must have a body");
 
   const { name, birthday, salary } = req.body;
@@ -22,6 +22,19 @@ router.post("/", async (res, req) => {
       .status(400)
       .send("Request body must have name, birthday, salary");
 
-  const newlyCreatedEmployee = await createEmployee({ name, birthday, salary });
-  res.status(201).send(newlyCreatedEmployee);
+  const employee = await createEmployee({ name, birthday, salary });
+  res.status(201).send(employee);
+});
+
+router.param("id", async (req, res, next, id) => {
+  // if (!id <= 0) return res.status(400).send("Please provide a valid ID");
+
+  const employee = await getEmployee(id);
+  if (!employee) return res.status(404).send("Employee does not exist");
+  req.employee = employee;
+  next();
+});
+
+router.get("/:id", (req, res) => {
+  res.send(req.employee);
 });

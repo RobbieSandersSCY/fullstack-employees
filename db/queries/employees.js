@@ -1,6 +1,11 @@
 import db from "#db/client";
 
-/** @returns the employee created according to the provided details */
+/** @returns the employee created according to the provided details
+ * @param {Object} employee
+ * @param {string} name
+ * @param {date} birthday
+ * @param {number} salary
+ */
 export async function createEmployee({ name, birthday, salary }) {
   try {
     const {
@@ -23,7 +28,12 @@ export async function createEmployee({ name, birthday, salary }) {
 
 /** @returns all employees */
 export async function getEmployees() {
-  // TODO
+  const sql = `
+  SELECT *
+  FROM employees
+  `;
+  const { rows: employees } = await db.query(sql);
+  return employees;
 }
 
 /**
